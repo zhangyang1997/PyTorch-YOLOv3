@@ -1,22 +1,22 @@
 # PyTorch-YOLOv3
-A minimal PyTorch implementation of YOLOv3, with support for training, inference and evaluation.
+YOLOv3最小的PyTorch实现，支持培训、推理和评估。
 
-## Installation
-##### Clone and install requirements
+## 安装
+##### 复制和安装需求
     $ git clone https://github.com/eriklindernoren/PyTorch-YOLOv3
     $ cd PyTorch-YOLOv3/
     $ sudo pip3 install -r requirements.txt
 
-##### Download pretrained weights
+##### 下载预训练权重
     $ cd weights/
     $ bash download_weights.sh
 
-##### Download COCO
+##### 下载COCO
     $ cd data/
     $ bash get_coco_dataset.sh
-    
-## Test
-Evaluates the model on COCO test.
+
+## 测试
+对模型进行COCO试验评估。
 
     $ python3 test.py --weights_path weights/yolov3.weights
 
@@ -27,8 +27,11 @@ Evaluates the model on COCO test.
 | YOLOv3 416 (paper)      | 55.3              |
 | YOLOv3 416 (this impl.) | 55.5              |
 
-## Inference
-Uses pretrained weights to make predictions on images. Below table displays the inference times when using as inputs images scaled to 256x256. The ResNet backbone measurements are taken from the YOLOv3 paper. The Darknet-53 measurement marked shows the inference time of this implementation on my 1080ti card.
+## 推理
+使用预先训练好的权重对图像进行预测。
+下表显示了使用缩放到256x256的作为输入图像的推断时间。
+ResNet主干的测量取自YOLOv3的论文。
+标记的Darknet-53测量显示了在我的1080ti卡上实现此实现的推理时间。
 
 | Backbone                | GPU      | FPS      |
 | ----------------------- |:--------:|:--------:|
@@ -44,7 +47,7 @@ Uses pretrained weights to make predictions on images. Below table displays the 
 <p align="center"><img src="assets/traffic.png" width="480"\></p>
 <p align="center"><img src="assets/messi.png" width="480"\></p>
 
-## Train
+## 训练
 ```
 $ train.py [-h] [--epochs EPOCHS] [--batch_size BATCH_SIZE]
                 [--gradient_accumulations GRADIENT_ACCUMULATIONS]
@@ -57,13 +60,13 @@ $ train.py [-h] [--epochs EPOCHS] [--batch_size BATCH_SIZE]
                 [--multiscale_training MULTISCALE_TRAINING]
 ```
 
-#### Example (COCO)
-To train on COCO using a Darknet-53 backend pretrained on ImageNet run: 
+#### 例子(COCO)
+使用在ImageNet上预先训练过的Darknet-53后端对COCO进行培训:
 ```
 $ python3 train.py --data_config config/coco.data  --pretrained_weights weights/darknet53.conv.74
 ```
 
-#### Training log
+#### 训练日志
 ```
 ---- [Epoch 7/100, Batch 7300/14658] ----
 +------------+--------------+--------------+--------------+
@@ -89,64 +92,54 @@ Total Loss 4.429395
 ```
 
 #### Tensorboard
-Track training progress in Tensorboard:
-* Initialize training
-* Run the command below
+ 用Tensorboard追踪训练进度:
+* 初始化训练
+* 运行下面命令
 * Go to http://localhost:6006/
 
 ```
 $ tensorboard --logdir='logs' --port=6006
 ```
 
-## Train on Custom Dataset
+## 训练自定义数据集
 
-#### Custom model
-Run the commands below to create a custom model definition, replacing `<num-classes>` with the number of classes in your dataset.
+#### 自定义模型
+运行下面的命令来创建一个自定义模型定义，用数据集中的类数量替换` < number -classes> `。
 
 ```
 $ cd config/                                # Navigate to config dir
 $ bash create_custom_model.sh <num-classes> # Will create custom model 'yolov3-custom.cfg'
 ```
 
-#### Classes
-Add class names to `data/custom/classes.names`. This file should have one row per class name.
+#### 类别
+在`data/custom/classes.names`中添加类名。这个文件每个类名应该有一行。
 
-#### Image Folder
-Move the images of your dataset to `data/custom/images/`.
+#### 图片文件夹
+将数据集的图像移动到`data/custom/images/`。
 
-#### Annotation Folder
-Move your annotations to `data/custom/labels/`. The dataloader expects that the annotation file corresponding to the image `data/custom/images/train.jpg` has the path `data/custom/labels/train.txt`. Each row in the annotation file should define one bounding box, using the syntax `label_idx x_center y_center width height`. The coordinates should be scaled `[0, 1]`, and the `label_idx` should be zero-indexed and correspond to the row number of the class name in `data/custom/classes.names`.
+#### 标签文件夹
+将注释移动到`data/custom/labels/`。`dataloader`期望对应于图像`data/custom/images/train.jpg`的注释文件具有路径`data/custom/labels/train.txt`。注释文件中的每一行应该使用`label_idx x_center y_center width height`语法定义一个边界框。坐标应该缩放为`[0,1]`，`label_idx`应该是零索引，并对应于`data/custom/classes.names`中类名的行号。
 
-#### Define Train and Validation Sets
-In `data/custom/train.txt` and `data/custom/valid.txt`, add paths to images that will be used as train and validation data respectively.
+#### 定义训练集和验证集
+在 `data/custom/train.txt` 和`data/custom/valid.txt`。为图像添加路径，分别用作训练数据和验证数据。
 
-#### Train
-To train on the custom dataset run:
+#### 训练
+要训练自定义数据集运行:
 
 ```
 $ python3 train.py --model_def config/yolov3-custom.cfg --data_config config/custom.data
 ```
 
-Add `--pretrained_weights weights/darknet53.conv.74` to train using a backend pretrained on ImageNet.
+添加 `--pretrained_weights weights/darknet53.conv.74` 使用在ImageNet上预先训练过的后端进行培训。
 
 
-## Credit
+## 引用
 
-### YOLOv3: An Incremental Improvement
+### YOLOv3:增量的改进
 _Joseph Redmon, Ali Farhadi_ <br>
 
-**Abstract** <br>
-We present some updates to YOLO! We made a bunch
-of little design changes to make it better. We also trained
-this new network that’s pretty swell. It’s a little bigger than
-last time but more accurate. It’s still fast though, don’t
-worry. At 320 × 320 YOLOv3 runs in 22 ms at 28.2 mAP,
-as accurate as SSD but three times faster. When we look
-at the old .5 IOU mAP detection metric YOLOv3 is quite
-good. It achieves 57.9 AP50 in 51 ms on a Titan X, compared
-to 57.5 AP50 in 198 ms by RetinaNet, similar performance
-but 3.8× faster. As always, all the code is online at
-https://pjreddie.com/yolo/.
+**摘要** <br>
+我们向YOLO提供一些更新!我们做了一些设计上的小改变来让它更好。我们还训练了这个非常棒的新网络。它比上次大了一点，但更准确。不过它还是很快的，别担心。在320×320 YOLOv3运行在22 ms 28.2 mAP，与SSD一样准确，但三倍快。当我们看旧的。5 IOU地图检测度量YOLOv3是相当好的。它在Titan X上实现57.9 AP50在51毫秒，相比之下，RetinaNet的57.5 AP50在198毫秒，类似的性能，但3.8倍快。和往常一样，所有代码都可以在线访问https://pjreddie.com/yolo/。
 
 [[Paper]](https://pjreddie.com/media/files/papers/YOLOv3.pdf) [[Project Webpage]](https://pjreddie.com/darknet/yolo/) [[Authors' Implementation]](https://github.com/pjreddie/darknet)
 
